@@ -17,12 +17,12 @@ namespace TestProject1
         {
             Stack<int> result = null;
            
-           int act=sourceStack.Pop;
+           int act=sourceStack.Pop();
            int max=act;
            result.Push(-1);
            while(sourceStack.Count>0)
            {
-               act=sourceStack.Pop;
+               act=sourceStack.Pop();
                if(act>max)
                {
                    max=act;
@@ -71,11 +71,13 @@ namespace TestProject1
 
         internal static int CountDictionaryRegistriesWithValueType(Dictionary<int, EValueType> sourceDict, EValueType type)
         { int cant=0;
-        EValueType act=null;
+        EValueType act= 0;
             Dictionary<int, EValueType>.ValueCollection valueColl = sourceDict.Values;
-        for(int i=0;i<valueColl.Count;i++)
+            List<EValueType> lista = new List<EValueType>();
+            lista.AddRange(valueColl);
+            for (int i=0;i<valueColl.Count;i++)
         {
-          act=valueColl[i];
+          act=lista[i];
           if(act.Equals(type))
           {
               cant++;
@@ -88,20 +90,23 @@ namespace TestProject1
         internal static Dictionary<int, EValueType> SortDictionaryRegistries(Dictionary<int, EValueType> sourceDict)
         {
             Dictionary<int, EValueType> result = null;
-            Dictionary<string, string>.KeyCollection keyColl =sourceDict.Keys;
-           for (int i = 0; i < keyColl.Count; i++) {
-    for (int j = 0; j < keyColl.Count - 1; j++) {
-        if (keyColl[j] < keyColl[j + 1]) {
-            temp = keyColl[j + 1];
-            keyColl[j + 1] = keyColl[j];
-            keyColl[j] = temp;
+            Dictionary<int, EValueType>.KeyCollection keyColl =sourceDict.Keys;
+            List<int> lista = new List<int>();
+            lista.AddRange(keyColl);
+            int temp = 0;
+            for (int i = 0; i < lista.Count; i++) {
+    for (int j = 0; j < lista.Count - 1; j++) {
+        if (lista[j] < lista[j + 1]) {
+            temp = lista[j + 1];
+            lista[j + 1] = lista[j];
+            lista[j] = temp;
         }
     }
 }
- int[] listafinal= new int[];
- for(int i;i<keyColl.Count;i++)
+ int[] listafinal= new int[128];
+ for (int i=0; i < lista.Count;i++)
  {
-     listafinal[i]=keyColl[i];
+     listafinal[i]=lista[i];
  }
           result= FillDictionaryFromSource(listafinal);
             return result;
@@ -140,7 +145,7 @@ namespace TestProject1
         {
             bool result = false;
            Queue<Ticket> clon=targetQueue;
-           ticket muestra= clon.Dequeue;
+           Ticket muestra= clon.Dequeue();
            if(ticket.Equals("Payment") || ticket.Equals("Subscription") || ticket.Equals("Cancellation"))
            {
             if(muestra.Equals(ticket))
