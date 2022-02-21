@@ -236,70 +236,38 @@ namespace TestProject1
 
         internal static bool AddNewTicket(Queue<Ticket> targetQueue, Ticket ticket)
         {
-            bool result = false;
+            bool result = true;
             bool cond = false;
             Queue<Ticket> clon = new Queue<Ticket>();
             Queue<Ticket> clon2 = new Queue<Ticket>();
             clon = targetQueue;
             clon2 = targetQueue;
-            
+
             List<Ticket> lista = new List<Ticket>();
             while (clon.Count > 0)
             {
                 lista.Add(clon.Dequeue());
 
             }
-
-
-
-            Ticket.ERequestType hola = lista.FirstOrDefault().RequestType;
-
-            if (ticket.RequestType.Equals(hola))
+            Ticket.ERequestType hola = new Ticket.ERequestType();
+            for (int i = 0; i < lista.Count; i++)
             {
-                if (ticket.RequestType.Equals(Ticket.ERequestType.Payment) || ticket.RequestType.Equals(Ticket.ERequestType.Subscription) || ticket.RequestType.Equals(Ticket.ERequestType.Cancellation))
-                {
-                    if (ticket.Turn < 100)
-                    {
-                        bool con2 = true;
-                        for (int i = 0; i < lista.Count; i++)
-                        {
-                            if (ticket.Turn.Equals(lista[i].Turn))
-                            {
-                                con2 = false;
-                                break;
-                            }
-                        }
-                        if (con2 == true)
-                        {
-                            targetQueue.Enqueue(ticket);
-                            result = true;  
-                        }
-                        else
-                        {
-                            result = false;
-                        }
-                    }
-                    else
-                    {
-                        result = false;
-                    }
+                hola = lista[i].RequestType;
+            }
 
-                }
-                else
-                {
-                    result = false;
-                }
 
+            Console.Write(ticket.RequestType);
+            Console.Write(ticket.Turn);
+            if (ticket.RequestType.Equals(hola) && ticket.Turn < 100)
+            {
+                
+                return true;
             }
             else
             {
-                result = false;
-            }
-                
 
-            
-            return result;
-        }
+                return false;
+            }
                }
 
         }
