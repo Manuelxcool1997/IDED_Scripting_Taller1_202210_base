@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
+using System;
 
 namespace TestProject1
 {
@@ -15,32 +17,59 @@ namespace TestProject1
 
         internal static Stack<int> GetNextGreaterValue(Stack<int> sourceStack)
         {
-            Stack<int> result = null;
-           
-           int act=sourceStack.Pop();
-           int max=act;
-           result.Push(-1);
-           while(sourceStack.Count>0)
-           {
-               act=sourceStack.Pop();
-               if(act>max)
-               {
-                   max=act;
-                   result.Push(-1);
-               }
-               else{
-                   result.Push(max);
+            Stack<int> result = new Stack<int>();
+            List<int> lista = new List<int>();
+           while(sourceStack.Count > 0)
+            {
+                lista.Add(sourceStack.Pop());
+            }
 
-               }
-           }
-            
+            List<int> listreverse = Enumerable.Reverse(lista).ToList();
+
+            for (int i = 0; i < listreverse.Count; i++)
+            {
+                bool con = false;
+                for (int j = i + 1; j < listreverse.Count; j++)
+                {
+                    if (listreverse[i] < listreverse[j])
+                    {
+                        result.Push(listreverse[j]);
+                        con = false;
+                        break;
+                    }
+                    else
+                    {
+                        con = true;
+                    }
+                }
+                if (con)
+                {
+                    result.Push(-1);
+                }
+            }
+
+
+            result.Push(-1);
+
+
+            for (int i = 0; i < listreverse.Count; i++)
+            {
+                Console.WriteLine(listreverse[i]);
+            }
+
+
+
+
+
+
+
             return result;
         }
 
         internal static Dictionary<int, EValueType> FillDictionaryFromSource(int[] sourceArr)
         {
-            Dictionary<int, EValueType> result = null;
-            int act=0;
+            Dictionary<int, EValueType> result = new Dictionary<int, EValueType>();
+            int act =0;
             for(int i=0;i<sourceArr.Length;i++)
             {
                 act=sourceArr[i];
@@ -60,7 +89,7 @@ namespace TestProject1
                 {
                     result.Add(act,EValueType.Seven);
                 }
-                else if(act % act == 0)
+                else 
                 {
                     result.Add(act,EValueType.Prime);
                 }
@@ -90,79 +119,188 @@ namespace TestProject1
         internal static Dictionary<int, EValueType> SortDictionaryRegistries(Dictionary<int, EValueType> sourceDict)
         {
             Dictionary<int, EValueType> result = null;
-            Dictionary<int, EValueType>.KeyCollection keyColl =sourceDict.Keys;
+            Dictionary<int, EValueType>.KeyCollection keyColl = sourceDict.Keys;
             List<int> lista = new List<int>();
             lista.AddRange(keyColl);
             int temp = 0;
-            for (int i = 0; i < lista.Count; i++) {
-    for (int j = 0; j < lista.Count - 1; j++) {
-        if (lista[j] < lista[j + 1]) {
-            temp = lista[j + 1];
-            lista[j + 1] = lista[j];
-            lista[j] = temp;
-        }
-    }
-}
- int[] listafinal= new int[128];
- for (int i=0; i < lista.Count;i++)
- {
-     listafinal[i]=lista[i];
- }
-          result= FillDictionaryFromSource(listafinal);
+            for (int i = 0; i < lista.Count *3; i++)
+            {
+                for (int j = 0; j < lista.Count - 1; j++)
+                {
+                    if (lista[j] < lista[j + 1])
+                    {
+                        temp = lista[j + 1];
+                        lista[j + 1] = lista[j];
+                        lista[j] = temp;
+                    }
+                }
+            }
+            int[] listafinal = new int[lista.Count];
+            for (int i = 0; i < lista.Count; i++)
+            {
+                
+                listafinal[i] = lista[i];
+            }
+
+            result = FillDictionaryFromSource(listafinal);
+
             return result;
         }
 
         internal static Queue<Ticket>[] ClassifyTickets(List<Ticket> sourceList)
         {
-            Queue<Ticket>[] result = null;
+            Queue<Ticket>[] result =  new Queue<Ticket>[3] ;
             Queue<Ticket> colaPayment = new Queue<Ticket>();
              Queue<Ticket> colaSubscription = new Queue<Ticket>();
                Queue<Ticket> colaCancelation = new Queue<Ticket>();
+            List<Ticket> listapay = new List<Ticket>();
+            List<Ticket> listasubs = new List<Ticket>();
+            List<Ticket> listacan = new List<Ticket>();
 
-               for(int i=0;i<sourceList.Count;i++)
+            Ticket act = new Ticket();
+
+               for (int i=0;i<sourceList.Count;i++)
                {
-                   Ticket act=sourceList[i];
-                   if(act.Equals("Payment"))
+                    act=sourceList[i];
+                   if(act.RequestType.Equals(Ticket.ERequestType.Payment))
                    {
-                         colaPayment.Enqueue(act);
+                         listapay.Add(act);
                    }
-                   else if(act.Equals("Subscription"))
+                   else if(act.RequestType.Equals(Ticket.ERequestType.Subscription))
                    {
-                       colaSubscription.Enqueue(act);
+                      listasubs.Add(act);
                    }
-                   else
+                   else if(act.RequestType.Equals(Ticket.ERequestType.Cancellation))
                    {
-                       colaCancelation.Enqueue(act);
+                      listacan.Add(act);
                    }
                }
-                result[0]= colaPayment;
-                result[1]= colaSubscription;
-                result[2]=colaCancelation;
+            
+            for (int i = 0; i < listapay.Count ; i++)
+            {
+                Ticket temp; ;
+                for (int j = 0; j < listapay.Count - 1; j++)
+                {
+                    if (listapay[j].Turn > listapay[j + 1].Turn)
+                    {
+                        temp = listapay[j + 1];
+                        listapay[j + 1] = listapay[j];
+                        listapay[j] = temp;
+                    }
+                }
+            }
+            for(int i = 0; i < listapay.Count ; i++)
+            {
+                colaPayment.Enqueue(listapay[i]);
+            }
+            for (int i = 0; i < listasubs.Count; i++)
+            {
+                Ticket temp; ;
+                for (int j = 0; j < listasubs.Count - 1; j++)
+                {
+                    if (listasubs[j].Turn> listasubs[j + 1].Turn)
+                    {
+                        temp = listasubs[j + 1];
+                        listasubs[j + 1] = listasubs[j];
+                        listasubs[j] = temp;
+                    }
+                }
+            }
+            for (int i = 0; i < listasubs.Count; i++)
+            {
+                colaSubscription.Enqueue(listasubs[i]);
+            }
+            for (int i = 0; i < listapay.Count; i++)
+            {
+                Ticket temp; ;
+                for (int j = 0; j < listacan.Count - 1; j++)
+                {
+                    if (listacan[j].Turn > listacan[j + 1].Turn)
+                    {
+                        temp = listacan[j + 1];
+                        listacan[j + 1] = listacan[j];
+                        listacan[j] = temp;
+                    }
+                }
+            }
+            for (int i = 0; i < listacan.Count; i++)
+            {
+                colaCancelation.Enqueue(listacan[i]);
+            }
+            Console.Write(colaPayment.Count);
+            result[0] = colaPayment;
+            result[1] = colaSubscription;
+                result[2] = colaCancelation;
             return result;
         }
 
         internal static bool AddNewTicket(Queue<Ticket> targetQueue, Ticket ticket)
         {
             bool result = false;
-           Queue<Ticket> clon=targetQueue;
-           Ticket muestra= clon.Dequeue();
-           if(ticket.Equals("Payment") || ticket.Equals("Subscription") || ticket.Equals("Cancellation"))
-           {
-            if(muestra.Equals(ticket))
+            bool cond = false;
+            Queue<Ticket> clon = new Queue<Ticket>();
+            Queue<Ticket> clon2 = new Queue<Ticket>();
+            clon = targetQueue;
+            clon2 = targetQueue;
+            
+            List<Ticket> lista = new List<Ticket>();
+            while (clon.Count > 0)
             {
-                targetQueue.Enqueue(ticket);
-                result=true;
-            }
-            else{
-                result=false;
-            }
-           }
-           else{
-               result=false;
-           }
+                lista.Add(clon.Dequeue());
 
+            }
+
+
+
+            Ticket.ERequestType hola = lista.FirstOrDefault().RequestType;
+
+            if (ticket.RequestType.Equals(hola))
+            {
+                if (ticket.RequestType.Equals(Ticket.ERequestType.Payment) || ticket.RequestType.Equals(Ticket.ERequestType.Subscription) || ticket.RequestType.Equals(Ticket.ERequestType.Cancellation))
+                {
+                    if (ticket.Turn < 100)
+                    {
+                        bool con2 = true;
+                        for (int i = 0; i < lista.Count; i++)
+                        {
+                            if (ticket.Turn.Equals(lista[i].Turn))
+                            {
+                                con2 = false;
+                                break;
+                            }
+                        }
+                        if (con2 == true)
+                        {
+                            targetQueue.Enqueue(ticket);
+                            result = true;  
+                        }
+                        else
+                        {
+                            result = false;
+                        }
+                    }
+                    else
+                    {
+                        result = false;
+                    }
+
+                }
+                else
+                {
+                    result = false;
+                }
+
+            }
+            else
+            {
+                result = false;
+            }
+                
+
+            
             return result;
-        }        
+        }
                }
+
         }
 
